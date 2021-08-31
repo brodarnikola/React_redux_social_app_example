@@ -15,6 +15,9 @@ import { sentence, paragraph, article, setRandom } from 'txtgen'
 import { parseISO } from 'date-fns'
 import seedrandom from 'seedrandom'
 
+// Add an extra delay to all endpoints, so loading spinners show up.
+const ARTIFICIAL_DELAY_MS = 2000
+
 const IdSerializer = RestSerializer.extend({
   serializeIds: 'always',
 })
