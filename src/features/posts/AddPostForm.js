@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { postAdded } from './postsSlice'
+
+import { addNewPost } from './postsSlice'
 
 const AddPostForm = () => {
   const [title, setTitle] = useState('')
@@ -13,8 +14,10 @@ const AddPostForm = () => {
 
   const dispatch = useDispatch()
   const users = useSelector((state) => state.users)
+  const [addRequestStatus, setAddRequestStatus] = useState('idle')
+  const [someError, setSomeError] = useState(null)
 
-  const saveNewPost = () => {
+  /* const saveNewPost = () => {
     if (title && content) {
       dispatch(postAdded(title, content, userId))
       setTitle('')
@@ -22,13 +25,59 @@ const AddPostForm = () => {
     }
   }
 
-  const canSave = Boolean(title) && Boolean(content) && Boolean(userId)
+  const canSave = Boolean(title) && Boolean(content) && Boolean(userId) */
+
+  const canSave =
+    [title, content, userId].every(Boolean) && addRequestStatus === 'idle'
+
+  const onSavePostClicked = async () => {
+    if (canSave) {
+      try {
+        setAddRequestStatus('pending')
+        // unwrap just tell me, if the backend request or this action "addNewPost" is succeded or failed
+        await dispatch(addNewPost({ title, content, user: userId })).unwrap()
+        setTitle('')
+        setContent('')
+        setUserId('')
+      } catch (err) {
+        setSomeError(err)
+        console.error('Failed to save the post: ', err)
+      } finally {
+        setAddRequestStatus('idle')
+      }
+    }
+  }
 
   const usersOptions = users.map((user) => (
     <option key={user.id} value={user.id}>
       {user.name}
     </option>
   ))
+
+  console.log('error before: ' + someError)
+  console.log('status: ' + addRequestStatus)
+
+  if (addRequestStatus === 'pending') {
+    return (
+      <div>
+        <p> Please wait loading..</p>
+      </div>
+    )
+  } else if (someError) {
+    console.log('error is: ' + someError)
+    return (
+      <div>
+        <p> Something went wrong </p>
+        <button
+          onClick={() => {
+            setSomeError('')
+          }}
+        >
+          Reload
+        </button>
+      </div>
+    )
+  }
 
   return (
     <section>
@@ -55,7 +104,11 @@ const AddPostForm = () => {
           value={content}
           onChange={onContentChanged}
         />
-        <button type="button" onClick={() => saveNewPost()} disabled={!canSave}>
+        <button
+          type="button"
+          onClick={() => onSavePostClicked()}
+          disabled={!canSave}
+        >
           Save Post
         </button>
       </form>

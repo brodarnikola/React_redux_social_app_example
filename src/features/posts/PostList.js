@@ -8,11 +8,12 @@ import { ReactionButtons } from './ReactionButtons'
 import { Spinner } from '../../components/Spinner'
 
 const PostData = ({ post }) => {
+  console.log('post id: ' + post.id)
   return (
-    <article className="post-excerpt" key={post.id}>
+    <article className="post-excerpt">
       <h3>{post.title}</h3>
       <p className="post-content">{post.content.substring(0, 100)}</p>
-      <TimeAgo timestamp={post.postCreated} />
+      <TimeAgo timestamp={post.date} />
       <ReactionButtons post={post} />
       <Link
         style={{ marginRight: '30px' }}
@@ -37,7 +38,7 @@ export const PostList = () => {
 
   useEffect(() => {
     if (postStatus === 'idle') {
-      const dataResponse = dispatch(fetchPosts)
+      const dataResponse = dispatch(fetchPosts())
 
       console.log('55 size of list is: ' + dataResponse.length)
     }
@@ -54,9 +55,9 @@ export const PostList = () => {
   } else if (postStatus === 'succeeded') {
     const orderedPosts = posts5
       .slice()
-      .sort((a, b) => b.postCreated.localeCompare(a.postCreated))
+      .sort((a, b) => b.date.localeCompare(a.date))
 
-    content = orderedPosts.map((post) => <PostData post={post} />)
+    content = orderedPosts.map((post) => <PostData key={post.id} post={post} />)
   } else if (postStatus === 'failed') {
     content = <div>{error}</div>
   }
