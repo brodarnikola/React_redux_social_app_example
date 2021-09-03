@@ -32,7 +32,7 @@ export const SinglePostPage = ({ match }) => {
         >
           Edit Post
         </Link>
-        <PostAuthor userId={post.userId}></PostAuthor>
+        <PostAuthor userId={post.user}></PostAuthor>
         <TimeAgo timestamp={post.postCreated} />
       </article>
     </section>

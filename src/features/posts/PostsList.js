@@ -22,7 +22,7 @@ const PostData = ({ post }) => {
       >
         View Post
       </Link>
-      <PostAuthor userId={post.userId}></PostAuthor>
+      <PostAuthor userId={post.user}></PostAuthor>
     </article>
   )
 }
