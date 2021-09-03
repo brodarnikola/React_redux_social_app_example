@@ -1,5 +1,5 @@
 import React, { useLayoutEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import { formatDistanceToNow, parseISO } from 'date-fns'
 import classnames from 'classnames'
 
@@ -12,7 +12,6 @@ import {
 
 export const NotificationsList = () => {
   const dispatch = useDispatch()
-
   const notifications = useSelector(selectAllNotifications)
   const users = useSelector(selectAllUsers)
 
