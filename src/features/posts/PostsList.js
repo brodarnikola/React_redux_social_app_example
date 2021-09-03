@@ -1,11 +1,6 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import {
-  selectAllPosts,
-  selectPostIds,
-  fetchPosts,
-  selectPostById,
-} from './postsSlice'
+import { selectPostIds, fetchPosts, selectPostById } from './postsSlice'
 import { Link } from 'react-router-dom'
 import { PostAuthor } from './PostAuthor'
 import { TimeAgo } from './TimeAgo'
