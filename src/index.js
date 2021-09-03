@@ -10,7 +10,7 @@ import { fetchUsers } from './features/users/usersSlice'
 import { worker } from './api/server'
 
 // Start our mock API server
-//worker.start({ onUnhandledRequest: 'bypass' })
+worker.start({ onUnhandledRequest: 'bypass' })
 
 store.dispatch(fetchUsers())
 

@@ -1,9 +1,10 @@
 import React, { useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { selectAllUsers } from '../users/usersSlice'
 
 import { addNewPost } from './postsSlice'
 
-const AddPostForm = () => {
+export const AddPostForm = () => {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [userId, setUserId] = useState('')
@@ -13,7 +14,7 @@ const AddPostForm = () => {
   const onAuthorChanged = (e) => setUserId(e.target.value)
 
   const dispatch = useDispatch()
-  const users = useSelector((state) => state.users)
+  const users = useSelector(selectAllUsers)
   const [addRequestStatus, setAddRequestStatus] = useState('idle')
   const [someError, setSomeError] = useState(null)
 

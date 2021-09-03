@@ -27,7 +27,7 @@ const PostData = ({ post }) => {
   )
 }
 
-export const PostList = () => {
+export const PostsList = () => {
   const dispatch = useDispatch()
 
   const postStatus = useSelector((state) => state.posts.status)
