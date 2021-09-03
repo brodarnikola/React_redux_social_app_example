@@ -6,6 +6,9 @@ import {
 } from '@reduxjs/toolkit'
 import { client } from '../../api/client'
 
+// example of normalization of data
+//{ ids: [], entities: {} }
+
 const postsAdapter = createEntityAdapter({
   sortComparer: (a, b) => b.date.localeCompare(a.date),
 })

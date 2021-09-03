@@ -1,14 +1,20 @@
 import React, { useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { selectAllPosts, fetchPosts } from './postsSlice'
+import {
+  selectAllPosts,
+  selectPostIds,
+  fetchPosts,
+  selectPostById,
+} from './postsSlice'
 import { Link } from 'react-router-dom'
 import { PostAuthor } from './PostAuthor'
 import { TimeAgo } from './TimeAgo'
 import { ReactionButtons } from './ReactionButtons'
 import { Spinner } from '../../components/Spinner'
 
-const PostData = ({ post }) => {
-  console.log('post id: ' + post.id)
+const PostData = ({ postId }) => {
+  const post = useSelector((state) => selectPostById(state, postId))
+  //console.log('post id: ' + post.id)
   return (
     <article className="post-excerpt">
       <h3>{post.title}</h3>
@@ -33,8 +39,10 @@ export const PostsList = () => {
   const postStatus = useSelector((state) => state.posts.status)
   const error = useSelector((state) => state.posts.error)
 
-  const posts5 = useSelector(selectAllPosts)
-  console.log('size of list is: ' + posts5.length)
+  const orderedPostIds = useSelector(selectPostIds)
+
+  //const posts5 = useSelector(selectAllPosts)
+  console.log('size of list is: ' + orderedPostIds.length)
 
   useEffect(() => {
     if (postStatus === 'idle') {
@@ -53,11 +61,13 @@ export const PostsList = () => {
   if (postStatus === 'loading') {
     content = <Spinner text="Loading" />
   } else if (postStatus === 'succeeded') {
-    const orderedPosts = posts5
-      .slice()
-      .sort((a, b) => b.date.localeCompare(a.date))
+    //const orderedPosts = posts5
+    //  .slice()
+    //  .sort((a, b) => b.date.localeCompare(a.date))
 
-    content = orderedPosts.map((post) => <PostData key={post.id} post={post} />)
+    content = orderedPostIds.map((postId) => (
+      <PostData key={postId} postId={postId} />
+    ))
   } else if (postStatus === 'failed') {
     content = <div>{error}</div>
   }

@@ -5,6 +5,9 @@ import {
 } from '@reduxjs/toolkit'
 import { client } from '../../api/client'
 
+// example of normalization of data
+//{ ids: [], entities: {} }
+
 const usersAdapter = createEntityAdapter()
 
 const initialState = usersAdapter.getInitialState()

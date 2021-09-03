@@ -6,6 +6,9 @@ import {
 
 import { client } from '../../api/client'
 
+// example of normalization of data
+//{ ids: [], entities: {} }
+
 const notificationsAdapter = createEntityAdapter({
   sortComparer: (a, b) => b.date.localeCompare(a.date),
 })
