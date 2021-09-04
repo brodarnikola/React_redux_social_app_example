@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { selectAllUsers } from '../users/usersSlice'
 
-import { addNewPost } from './postsSlice'
+import { useAddNewPostMutation } from '../api/apiSlice'
 
 export const AddPostForm = () => {
   const [title, setTitle] = useState('')
@@ -13,30 +13,21 @@ export const AddPostForm = () => {
   const onContentChanged = (e) => setContent(e.target.value)
   const onAuthorChanged = (e) => setUserId(e.target.value)
 
-  const dispatch = useDispatch()
+  const [addNewPost, { isLoading, error }] = useAddNewPostMutation()
+
   const users = useSelector(selectAllUsers)
   const [addRequestStatus, setAddRequestStatus] = useState('idle')
   const [someError, setSomeError] = useState(null)
 
-  /* const saveNewPost = () => {
-    if (title && content) {
-      dispatch(postAdded(title, content, userId))
-      setTitle('')
-      setContent('')
-    }
-  }
-
-  const canSave = Boolean(title) && Boolean(content) && Boolean(userId) */
-
-  const canSave =
-    [title, content, userId].every(Boolean) && addRequestStatus === 'idle'
+  const canSave = [title, content, userId].every(Boolean) && !isLoading
 
   const onSavePostClicked = async () => {
     if (canSave) {
       try {
         setAddRequestStatus('pending')
         // unwrap just tell me, if the backend request or this action "addNewPost" is succeded or failed
-        await dispatch(addNewPost({ title, content, user: userId })).unwrap()
+        //await dispatch(addNewPost({ title, content, user: userId })).unwrap()
+        await addNewPost({ title, content, user: userId }).unwrap()
         setTitle('')
         setContent('')
         setUserId('')
@@ -58,7 +49,7 @@ export const AddPostForm = () => {
   console.log('error before: ' + someError)
   console.log('status: ' + addRequestStatus)
 
-  if (addRequestStatus === 'pending') {
+  if (isLoading) {
     return (
       <div>
         <p> Please wait loading..</p>
@@ -69,6 +60,8 @@ export const AddPostForm = () => {
     return (
       <div>
         <p> Something went wrong </p>
+        <p> {error.status} </p>
+        <p> {error.data} </p>
         <button
           onClick={() => {
             setSomeError('')

@@ -1,14 +1,14 @@
-import React, { useEffect } from 'react'
-import { useSelector, useDispatch } from 'react-redux'
-import { selectPostIds, fetchPosts, selectPostById } from './postsSlice'
+import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { PostAuthor } from './PostAuthor'
 import { TimeAgo } from './TimeAgo'
 import { ReactionButtons } from './ReactionButtons'
 import { Spinner } from '../../components/Spinner'
 
-const PostData = ({ postId }) => {
-  const post = useSelector((state) => selectPostById(state, postId))
+import { useGetPostsQuery } from '../api/apiSlice'
+
+const PostData = ({ post }) => {
+  //const post = useSelector((state) => selectPostById(state, postId))
   //console.log('post id: ' + post.id)
   return (
     <article className="post-excerpt">
@@ -29,42 +29,54 @@ const PostData = ({ postId }) => {
 }
 
 export const PostsList = () => {
-  const dispatch = useDispatch()
+  const {
+    data: posts = [],
+    isLoading,
+    isSuccess,
+    isError,
+    error,
+  } = useGetPostsQuery()
 
-  const postStatus = useSelector((state) => state.posts.status)
-  const error = useSelector((state) => state.posts.error)
-
-  const orderedPostIds = useSelector(selectPostIds)
+  console.log('will that be called again')
+  const sortedPosts = useMemo(() => {
+    console.log('7777 will that be called again')
+    const sortedPosts = posts.slice()
+    // Sort posts in descending chronological order
+    return sortedPosts.sort((a, b) => b.date.localeCompare(a.date))
+  }, [posts])
 
   //const posts5 = useSelector(selectAllPosts)
-  console.log('size of list is: ' + orderedPostIds.length)
+  //console.log('size of list is: ' + posts.length)
 
-  useEffect(() => {
-    if (postStatus === 'idle') {
-      const dataResponse = dispatch(fetchPosts())
+  // useEffect(() => {
+  //   if (postStatus === 'idle') {
+  //     const dataResponse = dispatch(fetchPosts())
 
-      console.log('55 size of list is: ' + dataResponse.length)
-    }
-    return () => {
-      console.log(
-        'This cleanup will be executed every time, a component re-render'
-      )
-    }
-  }, [postStatus, dispatch])
+  //     console.log('55 size of list is: ' + dataResponse.length)
+  //   }
+  //   return () => {
+  //     console.log(
+  //       'This cleanup will be executed every time, a component re-render'
+  //     )
+  //   }
+  // }, [postStatus, dispatch])
 
   let content
-  if (postStatus === 'loading') {
+  if (isLoading) {
     content = <Spinner text="Loading" />
-  } else if (postStatus === 'succeeded') {
-    //const orderedPosts = posts5
-    //  .slice()
-    //  .sort((a, b) => b.date.localeCompare(a.date))
-
-    content = orderedPostIds.map((postId) => (
-      <PostData key={postId} postId={postId} />
+  } else if (isSuccess) {
+    const renderedPosts = sortedPosts.map((post) => (
+      <PostData key={post.id} post={post} />
     ))
-  } else if (postStatus === 'failed') {
-    content = <div>{error}</div>
+
+    content = renderedPosts
+  } else if (isError) {
+    content = (
+      <div>
+        {error.error} <br />
+        {error.toString()}
+      </div>
+    )
   }
 
   return (
